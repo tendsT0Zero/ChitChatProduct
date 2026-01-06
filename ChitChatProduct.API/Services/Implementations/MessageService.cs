@@ -1,8 +1,10 @@
 ﻿using ChitChatProduct.API.Data;
 using ChitChatProduct.API.DTOs;
 using ChitChatProduct.API.DTOs.Message;
+using ChitChatProduct.API.Infrastructure.Hubs;
 using ChitChatProduct.API.Models;
 using ChitChatProduct.API.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChitChatProduct.API.Services.Implementations
@@ -10,10 +12,11 @@ namespace ChitChatProduct.API.Services.Implementations
     public class MessageService : IMessageService
     {
         private readonly AppDbContext _context;
-
-        public MessageService(AppDbContext context)
+        private readonly IHubContext<ChatHub> _hubContext;
+        public MessageService(AppDbContext context, IHubContext<ChatHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         public async Task<APIResponse> SendMessageAsync(SendMessageDto request)
@@ -54,18 +57,22 @@ namespace ChitChatProduct.API.Services.Implementations
 
                 await _context.SaveChangesAsync();
 
+                var messageResponse = new MessageResponseDto
+                {
+                    Id = newMessage.Id,
+                    SenderId = newMessage.SenderId,
+                    Content = newMessage.Content,
+                    SentAt = newMessage.SentAt,
+                    
+                };
+                await _hubContext.Clients.Group(request.ConversationId.ToString())
+                    .SendAsync("ReceiveMessage", messageResponse);
                 return new APIResponse
                 {
                     IsSuccess = true,
                     StatusCode = StatusCodes.Status201Created,
                     Message = "Message sent successfully",
-                    ResponseObject = new MessageResponseDto
-                    {
-                        Id = newMessage.Id,
-                        SenderId = newMessage.SenderId,
-                        Content = newMessage.Content,
-                        SentAt = newMessage.SentAt
-                    }
+                    ResponseObject = messageResponse
                 };
             }
             catch (Exception ex)

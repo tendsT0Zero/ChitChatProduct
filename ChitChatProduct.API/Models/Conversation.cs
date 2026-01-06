@@ -6,6 +6,8 @@ namespace ChitChatProduct.API.Models
     {
         [Key]
         public int Id { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastMessageAt { get; set; }
         // each conversation based on a product. one conversation related to one product
         [Required]
         public int ProductId { get; set; }

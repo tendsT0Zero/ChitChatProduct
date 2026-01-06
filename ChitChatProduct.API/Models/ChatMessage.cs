@@ -10,7 +10,8 @@ namespace ChitChatProduct.API.Models
         [Required]
         public int ConversationId { get; set; }
         public Conversation Conversation { get; set; }
-
+        public string Content { get; set; }
+        public DateTime SentAt { get; set; }
         //each message's has one sender and one receiver
         [Required]
         public int SenderId { get; set; }
@@ -18,6 +19,8 @@ namespace ChitChatProduct.API.Models
         [Required]
         public int ReceiverId { get; set; }
         public User Receiver { get; set; }
+
+        public bool IsRead { get; set; }
 
     }
 }

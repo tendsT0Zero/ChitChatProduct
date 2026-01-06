@@ -11,6 +11,6 @@ namespace ChitChatProduct.API.DTOs.User
         public string Name { get; set; }
         [Required]
         public string Email { get; set; }
-        public ICollection<string>? ProductIds { get; set; }
+        public ICollection<int>? ProductIds { get; set; }
     }
 }

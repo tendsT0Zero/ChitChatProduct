@@ -1,4 +1,5 @@
 using ChitChatProduct.API.Data;
+using ChitChatProduct.API.Infrastructure.Hubs;
 using ChitChatProduct.API.Services.Implementations;
 using ChitChatProduct.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,13 @@ builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<IProductService,ProductService>();
+builder.Services.AddScoped<IConversationService,ConversationService>();
+builder.Services.AddScoped<IMessageService,MessageService>();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -40,5 +46,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

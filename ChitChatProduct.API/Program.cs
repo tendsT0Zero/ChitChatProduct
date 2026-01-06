@@ -1,4 +1,6 @@
 using ChitChatProduct.API.Data;
+using ChitChatProduct.API.Services.Implementations;
+using ChitChatProduct.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -10,6 +12,8 @@ builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+
+builder.Services.AddScoped<IUserService,UserService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
